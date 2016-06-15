@@ -10,7 +10,7 @@ def readNumber(line, index):
             number += int(line[index]) * keta
             keta *= 0.1
             index += 1
-    token = {'type': 'NUMBER', 'number': number}
+    token = {'type': 'NUMBER', 'number': float(number)}
     return token, index
 
 
@@ -39,7 +39,7 @@ def tokenize(line):
         elif line[index] == '*':
             (token, index) = readAster(line, index)
         elif line[index] == '/':
-                (token, index) = readSlash(line, index)
+            (token, index) = readSlash(line, index)
         elif line[index] == '+':
             (token, index) = readPlus(line, index)
         elif line[index] == '-':
@@ -50,10 +50,31 @@ def tokenize(line):
         tokens.append(token)
     return tokens
 
-
-def evaluate(tokens):
-    answer = 0
+def evaluateas(tokens): #aster&slash
+    temp = 0
+    float(temp)
     tokens.insert(0, {'type': 'PLUS'}) # Insert a dummy '+' token
+    index = 1
+    while index < len(tokens):
+        if tokens[index]['type'] == 'NUMBER':
+            if tokens[index - 1]['type'] == 'ASTER':
+                temp = (tokens[index-2]['number'] * tokens[index]['number'])
+                tokens[index]['number'] = temp
+                tokens[index - 2]['number']= 0
+                tokens[index - 1]['type'] = 'PLUS'
+            elif tokens[index - 1]['type'] == 'SLASH':
+                temp = (tokens[index - 2]['number'] / tokens[index]['number'])
+                tokens[index]['number'] = temp
+                tokens[index - 2]['number']= 0
+                tokens[index - 1]['type'] = 'PLUS'
+            elif tokens[index - 1]['type'] != 'PLUS' and tokens[index - 1]['type'] != 'MINUS':
+                print 'Invalid syntax'
+        index += 1
+    return tokens
+
+def evaluatepm(tokens): #plus&minus
+    answer = 0
+    #tokens.insert(0, {'type': 'PLUS'}) # Insert a dummy '+' token
     index = 1
     while index < len(tokens):
         if tokens[index]['type'] == 'NUMBER':
@@ -71,5 +92,6 @@ while True:
     print '> ',
     line = raw_input()
     tokens = tokenize(line)
-    answer = evaluate(tokens)
+    tokensas = evaluateas(tokens)
+    answer = evaluatepm(tokensas)
     print "answer = %f\n" % answer
